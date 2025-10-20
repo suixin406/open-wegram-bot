@@ -120,7 +120,7 @@ export async function handleWebhook(request, ownerUid, botToken, secretToken) {
             const fullName = [from.first_name, from.last_name].filter(Boolean).join(' ');
             senderName = `${groupName}-${[username, fullName].filter(Boolean).join('-')}`;
         } else {
-            senderName = sender.username ? `@${sender.username}` : [sender.first_name, sender.last_name].filter(Boolean).join(' ');
+            senderName = from.username ? `@${from.username}` : [from.first_name, from.last_name].filter(Boolean).join(' ');
         }
 
         // 按钮文字防止过长（Telegram 限制约 64 字符）
