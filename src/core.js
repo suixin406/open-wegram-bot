@@ -109,9 +109,10 @@ export async function handleWebhook(request, ownerUid, botToken, secretToken) {
             return new Response('OK');
         }
         // ========== 新逻辑开始 ==========
+        const sender = message.chat;
         const chat = message.chat;
         const from = message.from;
-        const senderUid = from.id.toString();
+        const senderUid = sender.id.toString();
         let senderName;
 
         if (chat.type === 'group' || chat.type === 'supergroup') {
