@@ -108,10 +108,30 @@ export async function handleWebhook(request, ownerUid, botToken, secretToken) {
         if ("/start" === message.text) {
             return new Response('OK');
         }
+        // ========== 新逻辑开始 ==========
+        const chat = message.chat;
+        const from = message.from;
+        const senderUid = from.id.toString();
+        let senderName;
 
-        const sender = message.chat;
-        const senderUid = sender.id.toString();
-        const senderName = sender.username ? `@${sender.username}` : [sender.first_name, sender.last_name].filter(Boolean).join(' ');
+        if (chat.type === 'group' || chat.type === 'supergroup') {
+            const groupName = chat.title || '未知群组';
+            const username = from.username ? `@${from.username}` : '';
+            const fullName = [from.first_name, from.last_name].filter(Boolean).join(' ');
+            senderName = `${groupName}-${[username, fullName].filter(Boolean).join('-')}`;
+        } else {
+            senderName = sender.username ? `@${sender.username}` : [sender.first_name, sender.last_name].filter(Boolean).join(' ');
+        }
+
+        // 按钮文字防止过长（Telegram 限制约 64 字符）
+        let displayName = senderName;
+        if (displayName.length > 40) {
+            displayName = displayName.slice(0, 37) + '...';
+        }
+        // ========== 新逻辑结束 ==========
+        // const sender = message.chat;
+        // const senderUid = sender.id.toString();
+        // const senderName = sender.username ? `@${sender.username}` : [sender.first_name, sender.last_name].filter(Boolean).join(' ');
 
         const copyMessage = async function (withUrl = false) {
             const ik = [[{
